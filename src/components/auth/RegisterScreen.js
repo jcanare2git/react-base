@@ -1,10 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from '../../hooks/useForm';
 import validator from 'validator';
+import { setError, removeError } from '../../actions/ui';
+import { startRegisterWithEmailPasswordName } from '../../actions/auth';
 
 export const RegisterScreen = () => {
 
+    const dispatch = useDispatch();
+
+    const { msgError } = useSelector(state => state.ui);
+    console.log(msgError);
     /*
     {
         name:'Juan Carlos',
@@ -28,26 +35,34 @@ export const RegisterScreen = () => {
         e.preventDefault();
 
         if (isFormValid()) {
-            console.log("Formulario válido");
+            dispatch(startRegisterWithEmailPasswordName(email, password, name));
         }
 
     }
 
     const isFormValid = () => {
 
+
         if (name.trim().length === 0) {
-            console.log("Name is required");
+            //Disparar acción de Error al Store
+            dispatch(setError("Name is required"));
             return false;
-        } else if ( !validator.isEmail( email) ) {
-            console.log("Email is Not Valid");
+        } else if (!validator.isEmail(email)) {
+            //Disparar acción de Error al Store
+            dispatch(setError("Email is Not Valid"));
             return false;
-        } else if( password !== password2 ){
-            console.log("The passwords should be equals");
+        } else if (password !== password2) {
+            //Disparar acción de Error al Store
+            dispatch(setError("The passwords should be equals"));
             return false;
-        } else if( password.length < 6 ){
-            console.log("Password should be at least 6 Characters!");
+        } else if (password.length < 6) {
+            //Disparar acción de Error al Store
+            dispatch(setError("Password should be at least 6 Characters!"));
             return false;
         }
+
+        //Disparar acción de Remover Error al Store
+        dispatch(removeError());
 
         return true;
     }
@@ -56,9 +71,13 @@ export const RegisterScreen = () => {
         <>
             <h3 className="auth__title">Register</h3>
 
-            <div className="auth__alert-error">
-                Hola Mundo
-            </div>
+            {
+                msgError &&
+                (<div className="auth__alert-error">
+                    {msgError}
+                </div>)
+            }
+
             <form onSubmit={handlerRegister}>
                 <input
                     type='text'
