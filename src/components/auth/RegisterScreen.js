@@ -1,4 +1,5 @@
 import React from 'react';
+import Swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from '../../hooks/useForm';
@@ -42,24 +43,53 @@ export const RegisterScreen = () => {
 
     const isFormValid = () => {
 
-
         if (name.trim().length === 0) {
             //Disparar acción de Error al Store
             dispatch(setError("Name is required"));
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error...',
+                text: "Name is required",
+              })
+
             return false;
         } else if (!validator.isEmail(email)) {
             //Disparar acción de Error al Store
             dispatch(setError("Email is Not Valid"));
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error...',
+                text: "Email is Not Valid",
+              })
+
             return false;
         } else if (password !== password2) {
             //Disparar acción de Error al Store
             dispatch(setError("The passwords should be equals"));
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error...',
+                text: "The passwords should be equals",
+              })
+
             return false;
         } else if (password.length < 6) {
             //Disparar acción de Error al Store
             dispatch(setError("Password should be at least 6 Characters!"));
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error...',
+                text: "Password should be at least 6 Characters!",
+              })
+
             return false;
         }
+
+        
 
         //Disparar acción de Remover Error al Store
         dispatch(removeError());
@@ -70,13 +100,6 @@ export const RegisterScreen = () => {
     return (
         <>
             <h3 className="auth__title">Register</h3>
-
-            {
-                msgError &&
-                (<div className="auth__alert-error">
-                    {msgError}
-                </div>)
-            }
 
             <form onSubmit={handlerRegister}>
                 <input
