@@ -4,7 +4,7 @@ export const NothingSelected = () => {
     return (
         <div className="nothing_main-content">
 
-            <p className>
+            <p>
                 Select Something <br />
                 pr create an entry
             </p>
