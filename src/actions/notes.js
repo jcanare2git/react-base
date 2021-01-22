@@ -1,4 +1,7 @@
+import Swal from 'sweetalert2';
+
 import { db } from "../firebase/firebaseConfig";
+import { fileUpload } from '../helpers/fileUpload';
 import { loadNotes } from "../helpers/loadNotes";
 import { types } from '../types/types';
 
@@ -46,3 +49,52 @@ export const setNotes = (notes) => ({
     type: types.notesLoad,
     payload: notes
 });
+
+export const startSaveNote = ( note ) => {
+
+    return async(dispatch, getState) =>{
+
+        const { uid } = getState().auth;
+        
+        if( !note.url){
+            delete note.url;
+        }
+        
+        const noteToFirestore = {...note };
+        delete noteToFirestore.id;
+
+        await db.doc(`${uid}/journal/notes/${note.id}`).update( noteToFirestore);
+
+        dispatch(refreshNote( note.id, noteToFirestore ));
+
+        Swal.fire('Saved', noteToFirestore.title, 'success');
+
+    }
+}
+
+export const refreshNote = (id, note) => ({
+
+    type: types.notesUpdated,
+    payload: {
+        id,
+        note: {
+            ...note
+        }
+    }
+
+})
+
+//Subir Archivos a Cloudinary
+export const startUploading = ( file ) => {
+
+    return async( dispatch, getState ) => {
+
+        const {active: activeNote } = getState().notes;
+
+        const fileUrl = await fileUpload( file );
+
+        console.log(fileUrl);
+
+    }
+
+}
